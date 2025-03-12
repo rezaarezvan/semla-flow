@@ -17,7 +17,7 @@ module purge
 module load Python/3.11
 
 # Create and activate virtual environment if it doesn't exist
-VENV_DIR="$HOME/semla"
+VENV_DIR="./semla"
 if [ ! -d "$VENV_DIR" ]; then
     echo "Creating virtual environment..."
     python -m venv $VENV_DIR
@@ -35,17 +35,15 @@ if [ ! -d "$VENV_DIR/lib/python3.11/site-packages/rdkit" ]; then
 fi
 
 export PYTHONPATH=$PYTHONPATH:$(pwd)
-# Replace with API key
-export WANDB_API_KEY=wandb_api_key
 
 # Check dataset availability
-DATA_PATH="/data/qm9/smol"
+DATA_PATH="data/qm9/smol"
 if [ ! -d "$DATA_PATH" ]; then
     echo "ERROR: Dataset not found at $DATA_PATH"
     exit 1
 fi
 
-python -m semlaflow.train \
+srun python3 -m semlaflow.train \
     --data_path $DATA_PATH \
     --dataset qm9 \
     --d_model 384 \
@@ -71,7 +69,6 @@ python -m semlaflow.train \
     --bucket_cost_scale "linear" \
     --val_check_epochs 10 \
     --n_validation_mols 2000 \
-    --integration_steps 100 \
     --coord_noise_std_dev 0.2 \
     --optimal_transport "equivariant" \
     --self_condition

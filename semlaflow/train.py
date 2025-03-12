@@ -332,6 +332,9 @@ def build_trainer(args):
         check_val_every_n_epoch=val_check_epochs,
         callbacks=[lr_monitor, checkpointing],
         precision="32",
+        accelerator="gpu",
+        devices=1,
+        use_distributed_sampler=False,
     )
     return trainer
 
